@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     public Transform[] spawnPoints; // AI 플레이어 소환 위치
     private char[] playerNames = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' }; // AI 플레이어 이름 배열
 
+    private List<string> ranklist = new List<string>(); // 순위와 이름을 저장할 리스트
+    private int rank = 1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +56,21 @@ public class GameManager : MonoBehaviour
                     player.Act(actionIndex);
                 }
             }
+            foreach (string deadPlayerName in AIPlayer.deathList)
+            {
+                AIPlayer deadPlayer = aiPlayers.Find(player => player.playerName == deadPlayerName);
+                if (deadPlayer != null)
+                {
+                    deadPlayer.IsAlive = false;
+                    ranklist.Add($"{deadPlayer.playerName}: {rank}위"); // 이름과 순위를 함께 추가
+                    Debug.Log($"{deadPlayer.playerName} has been ranked {rank}");
+                }
+            }
 
+            // Clear deathList after updating IsAlive status
+            rank = rank + AIPlayer.deathList.Count;
+            AIPlayer.deathList.Clear();
+            
             actionturns++;
 
             yield return new WaitForSeconds(1.0f); // 각 턴 사이에 1초 대기
@@ -63,6 +80,8 @@ public class GameManager : MonoBehaviour
                 if (aiPlayers.FindAll(player => player.IsAlive).Count == 1)
                 {
                     Debug.Log("Game Over. Winner: " + aiPlayers.Find(player => player.IsAlive)?.playerName);
+                    
+                    ranklist.Add($"{aiPlayers.Find(player => player.IsAlive)?.playerName}: {8}위");
                     currentTurn++;
                     actionturns = 0;
                 }
@@ -72,6 +91,7 @@ public class GameManager : MonoBehaviour
                     currentTurn++;
                     actionturns = 0;
                 }
+                Debug.Log("Final Rank List: " + string.Join(" ", ranklist));
             }
         }
 

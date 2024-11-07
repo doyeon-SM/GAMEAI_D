@@ -11,6 +11,7 @@ public class AIPlayer : MonoBehaviour
     public float fitness;
     private List<AIPlayer> opponents;
     public string playerName;
+    public static List<string> deathList = new List<string>();
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +42,7 @@ public class AIPlayer : MonoBehaviour
     public void SetName(string name)
     {
         playerName = name;
-        Debug.Log($"AI Player {playerName} initialized.");
+        //Debug.Log($"AI Player {playerName} initialized.");
     }
 
     public void Act(int actionIndex)
@@ -66,10 +67,19 @@ public class AIPlayer : MonoBehaviour
     {
         // 공격: 랜덤으로 살아있는 상대를 선택하고 공격
         AIPlayer target = GetRandomOpponent();
+        IsTakeCover = false;
         if (target != null && target.IsAlive && !target.IsTakeCover)
         {
-            target.IsAlive = false;
-            Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하여 제거했습니다.");
+            if (!deathList.Contains(target.playerName))
+            {
+                //target.IsAlive = false;
+                deathList.Add(target.playerName);
+                Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하여 제거했습니다.");
+            }
+        }
+        else if(target != null && target.IsAlive && target.IsTakeCover)
+        {
+            Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하였으나 피했습니다.");
         }
     }
 
@@ -77,10 +87,19 @@ public class AIPlayer : MonoBehaviour
     {
         // 수류탄: 무작위 위치에 던짐, 해당 위치에 있는 상대가 있으면 제거
         AIPlayer target = GetRandomOpponent();
+        IsTakeCover = false;
         if (target != null && target.IsAlive && target.IsTakeCover)
         {
-                target.IsAlive = false;
+            if (!deathList.Contains(target.playerName))
+            {
+                //target.IsAlive = false;
+                deathList.Add(target.playerName);
                 Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던져 제거했습니다.");
+            }
+        }
+        else if (target != null && target.IsAlive && !target.IsTakeCover)
+        {
+            Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던지려 했으나 포착되었습니다.");
         }
     }
 
