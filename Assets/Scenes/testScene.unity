@@ -788,6 +788,7 @@ MonoBehaviour:
   turns: 1
   aiPlayerPrefab: {fileID: 776477242982842941, guid: 63da198cd7d13a549bf00d1082232b7f, type: 3}
   TrenchPrefab: {fileID: 4455486354057694575, guid: 7e9a012d7905f8c43b008bb09f67245d, type: 3}
+  GrenadePrefab: {fileID: 4595785547498750621, guid: 97de34d24bc8a074e92ad6021d813c50, type: 3}
   spawnPoints:
   - {fileID: 1475141098}
   - {fileID: 754346799}

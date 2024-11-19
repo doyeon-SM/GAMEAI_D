@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
                         
                     }
                 }
+
                 foreach (string deadPlayerName in AIPlayer.deathList)
                 {
                     AIPlayer deadPlayer = aiPlayers.Find(player => player.playerName == deadPlayerName);

@@ -96,6 +96,7 @@ public class AIPlayer : MonoBehaviour
         // 수류탄: 무작위 위치에 던짐, 해당 위치에 있는 상대가 있으면 제거
         AIPlayer target = GetRandomOpponent();
         Uncover();
+        
         if (target != null && target.IsAlive && target.IsTakeCover)
         {
             if (!deathList.Contains(target.playerName))
@@ -163,4 +164,6 @@ public class AIPlayer : MonoBehaviour
         currentPrefab = this.gameObject;
         currentPrefab.SetActive(true); // AI Player 복원
     }
+
+    
 }
