@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public InputField turnsInputField; // 유저 입력을 받을 InputField
     public int turns = 2; // 플레이어가 입력한 턴 수
     private int actionturns = 0;
     private int currentTurn = 0;
@@ -35,13 +36,29 @@ public class GameManager : MonoBehaviour
         }
         
         InitializePlayers();
-        startButton.onClick.AddListener(StartGame); // 스타트 버튼 클릭 시 게임 시작
+        startButton.onClick.AddListener(OnStartButtonClicked); // Start 버튼 클릭 리스너
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    void OnStartButtonClicked()
+    {
+        // 유저 입력 값 가져오기
+        if (!string.IsNullOrEmpty(turnsInputField.text) && int.TryParse(turnsInputField.text, out int userTurns))
+        {
+            turns = Mathf.Max(1, userTurns); // 최소 1로 제한
+            Debug.Log($"Turns set to {turns}");
+            turnsInputField.gameObject.SetActive(false); // InputField 숨기기
+            startButton.gameObject.SetActive(false);    // Start 버튼 숨기기
+            StartCoroutine(GameLoop());
+        }
+        else
+        {
+            Debug.LogError("Invalid input for turns. Please enter a valid number.");
+        }
     }
 
     void InitializePlayers()
@@ -59,10 +76,7 @@ public class GameManager : MonoBehaviour
             aiPlayers.Add(player);
         }
     }
-    void StartGame()
-    {
-        StartCoroutine(GameLoop());
-    }
+    
 
     IEnumerator GameLoop()
     {
@@ -140,6 +154,13 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f); // 다음 턴 시작 전 대기
         }
         Debug.Log("All turns completed.");
+        // reset
+        currentTurn = 0;
+        actionturns = 0;
+        rank = 1;
+        ranklist.Clear();
+        turnsInputField.gameObject.SetActive(true);
+        startButton.gameObject.SetActive(true); // 모든 턴 종료 후 Start 버튼 다시 활성화
     }
 
     void ExtractGenesFromRank()
