@@ -13,10 +13,13 @@ public class AIPlayer : MonoBehaviour
     public string playerName;
     public static List<string> deathList = new List<string>();
 
+    public GameObject trenchPrefab; // 참호 프리팹을 참조할 변수
+    private GameObject currentPrefab; // 현재 표시되는 프리팹 (AI Player 또는 Trench)
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        currentPrefab = this.gameObject; // 초기 프리팹은 AI Player 자신
     }
 
     // Update is called once per frame
@@ -44,6 +47,11 @@ public class AIPlayer : MonoBehaviour
         playerName = name;
         //Debug.Log($"AI Player {playerName} initialized.");
     }
+    public void UpdateVisibility()
+    {
+        Uncover();
+        gameObject.SetActive(IsAlive);
+    }
 
     public void Act(int actionIndex)
     {
@@ -67,19 +75,19 @@ public class AIPlayer : MonoBehaviour
     {
         // 공격: 랜덤으로 살아있는 상대를 선택하고 공격
         AIPlayer target = GetRandomOpponent();
-        IsTakeCover = false;
+        Uncover();
         if (target != null && target.IsAlive && !target.IsTakeCover)
         {
             if (!deathList.Contains(target.playerName))
             {
                 //target.IsAlive = false;
                 deathList.Add(target.playerName);
-                Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하여 제거했습니다.");
+                //Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하여 제거했습니다.");
             }
         }
         else if(target != null && target.IsAlive && target.IsTakeCover)
         {
-            Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하였으나 피했습니다.");
+            //Debug.Log($"{this.playerName}이(가) {target.playerName}을(를) 공격하였으나 피했습니다.");
         }
     }
 
@@ -87,19 +95,19 @@ public class AIPlayer : MonoBehaviour
     {
         // 수류탄: 무작위 위치에 던짐, 해당 위치에 있는 상대가 있으면 제거
         AIPlayer target = GetRandomOpponent();
-        IsTakeCover = false;
+        Uncover();
         if (target != null && target.IsAlive && target.IsTakeCover)
         {
             if (!deathList.Contains(target.playerName))
             {
                 //target.IsAlive = false;
                 deathList.Add(target.playerName);
-                Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던져 제거했습니다.");
+                //Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던져 제거했습니다.");
             }
         }
         else if (target != null && target.IsAlive && !target.IsTakeCover)
         {
-            Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던지려 했으나 포착되었습니다.");
+            //Debug.Log($"{this.playerName}이(가) {target.playerName}의 위치에 수류탄을 던지려 했으나 포착되었습니다.");
         }
     }
 
@@ -107,7 +115,8 @@ public class AIPlayer : MonoBehaviour
     {
         // 엄패: 해당 턴 동안 보호 상태로 설정
         IsTakeCover = true;
-        Debug.Log($"{this.playerName}이(가) 엄패 중입니다.");
+        SwitchToTrench(); // Trench로 변경
+        //Debug.Log($"{this.playerName}이(가) 엄패 중입니다.");
     }
 
     AIPlayer GetRandomOpponent()
@@ -115,5 +124,43 @@ public class AIPlayer : MonoBehaviour
         List<AIPlayer> aliveOpponents = opponents.FindAll(player => player != this && player.IsAlive);
         if (aliveOpponents.Count == 0) return null;
         return aliveOpponents[Random.Range(0, aliveOpponents.Count)];
+    }
+
+    void Uncover()
+    {
+        IsTakeCover = false;
+        SwitchToAIPlayer(); // AI Player로 복원
+        //Debug.Log($"{playerName}이(가) 엄패에서 벗어났습니다.");
+    }
+    void SwitchToTrench()
+    {
+        if (trenchPrefab == null)
+        {
+            Debug.LogError($"{playerName}: Trench prefab is not assigned.");
+            return;
+        }
+
+        // 이미 Trench가 활성화되어 있는지 확인
+        if (currentPrefab == trenchPrefab)
+        {
+            //Debug.Log($"{playerName}: Trench is already active.");
+            return;
+        }
+        // 현재 프리팹 비활성화 후 Trench Prefab 생성
+        if (currentPrefab != null) currentPrefab.SetActive(false);
+        // 새로운 Trench 프리팹 생성
+        currentPrefab = Instantiate(trenchPrefab, transform.position, transform.rotation, transform.parent);
+        this.gameObject.SetActive(false); // AI Player 비활성화
+    }
+
+    public void SwitchToAIPlayer()
+    {
+        if (currentPrefab != null && currentPrefab != this.gameObject)
+        {
+            Destroy(currentPrefab); // 참호 프리팹 삭제
+        }
+
+        currentPrefab = this.gameObject;
+        currentPrefab.SetActive(true); // AI Player 복원
     }
 }

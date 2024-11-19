@@ -192,7 +192,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 'Start
+
+'
 --- !u!222 &29653486
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -557,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e34a9f11e58244548a5cb1fa6b259dd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turns: 2
+  turns: 1
   aiPlayerPrefab: {fileID: 776477242982842941, guid: 63da198cd7d13a549bf00d1082232b7f, type: 3}
   TrenchPrefab: {fileID: 4455486354057694575, guid: 7e9a012d7905f8c43b008bb09f67245d, type: 3}
   spawnPoints:

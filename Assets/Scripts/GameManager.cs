@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
 
     public Button startButton; // 시작 버튼
     private char[] playerNames = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' }; // AI 플레이어 이름 배열
-
     private List<string> ranklist = new List<string>(); // 순위와 이름을 저장할 리스트
     private int rank = 1;
 
@@ -34,7 +33,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Spawn Points are not assigned or empty in the inspector.");
             return;
         }
-
+        
         InitializePlayers();
         startButton.onClick.AddListener(StartGame); // 스타트 버튼 클릭 시 게임 시작
     }
@@ -52,6 +51,9 @@ public class GameManager : MonoBehaviour
             // 지정된 위치에 AI 플레이어 오브젝트 소환
             GameObject aiObject = Instantiate(aiPlayerPrefab, spawnPoints[i].position, Quaternion.identity);
             AIPlayer player = aiObject.GetComponent<AIPlayer>();
+            // 트렌치 프리팹 설정
+            player.trenchPrefab = TrenchPrefab;
+
             player.Initialize(aiPlayers);
             player.SetName(playerNames[i].ToString()); // AI 플레이어에 이름 설정
             aiPlayers.Add(player);
@@ -77,6 +79,7 @@ public class GameManager : MonoBehaviour
                     {
                         int actionIndex = actionturns % player.genes.Length;
                         player.Act(actionIndex);
+                        
                     }
                 }
                 foreach (string deadPlayerName in AIPlayer.deathList)
@@ -84,7 +87,8 @@ public class GameManager : MonoBehaviour
                     AIPlayer deadPlayer = aiPlayers.Find(player => player.playerName == deadPlayerName);
                     if (deadPlayer != null)
                     {
-                        deadPlayer.IsAlive = false;
+                        deadPlayer.IsAlive = false;                        
+                        deadPlayer.UpdateVisibility(); // IsAlive 상태 변경 후 가시성 업데이트
                         ranklist.Add($"{deadPlayer.playerName}: {rank}위"); // 이름과 순위를 함께 추가
                         Debug.Log($"{deadPlayer.playerName} has been ranked {rank}");
                     }
@@ -121,6 +125,7 @@ public class GameManager : MonoBehaviour
             {
                 player.IsAlive = true;
                 player.IsTakeCover = false;
+                player.SwitchToAIPlayer(); // 모든 플레이어를 AI Player 프리팹으로 복원
             }
 
             // 다음 턴 진행을 위해 초기화
