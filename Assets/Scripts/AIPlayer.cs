@@ -21,6 +21,8 @@ public class AIPlayer : MonoBehaviour
     public GameObject Gense_A; // Gense_A 프리팹
     public GameObject Gense_C; // Gense_C 프리팹
     public GameObject Gense_G; // Gense_G 프리팹
+    private List<SpriteRenderer> genseSprites = new List<SpriteRenderer>(); // Gense SpriteRenderer 리스트
+
     // Start is called before the first frame update
     void Start()
     {
@@ -170,12 +172,14 @@ public class AIPlayer : MonoBehaviour
         currentPrefab.SetActive(true); // AI Player 복원
     }
 
+    //유전자 시각화
     public void VisualizeGenes(Transform spawnPoint)
     {
         // 기존 GensePrefab 삭제
         if (currentGenseInstance != null)
         {
             Destroy(currentGenseInstance);
+            genseSprites.Clear(); // 기존 SpriteRenderer 참조도 제거
         }
 
         // GensePrefab을 플레이어 위치 아래에 생성
@@ -207,9 +211,39 @@ public class AIPlayer : MonoBehaviour
                 if (genseInstance != null)
                 {
                     genseInstance.transform.localPosition = Vector3.zero; // 부모 기준 위치로 초기화
+
+                    // SpriteRenderer를 리스트에 추가
+                    SpriteRenderer spriteRenderer = genseInstance.GetComponent<SpriteRenderer>();
+                    if (spriteRenderer != null)
+                    {
+                        genseSprites.Add(spriteRenderer);
+                    }
                 }
             }
         }
     }
+    //유전자 색 red 변경(현재 진행중인 행동 확인)
+    public void HighlightCurrentAction(int actionIndex)
+    {
+        // 모든 Gense 색상을 기본값으로 초기화
+        foreach (var spriteRenderer in genseSprites)
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.white; // 기본값
+            }
+        }
+
+        // 현재 인덱스의 Gense 색상을 빨간색으로 설정
+        if (actionIndex >= 0 && actionIndex < genseSprites.Count)
+        {
+            SpriteRenderer currentSprite = genseSprites[actionIndex];
+            if (currentSprite != null)
+            {
+                currentSprite.color = Color.red;
+            }
+        }
+    }
+
 
 }

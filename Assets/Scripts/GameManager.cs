@@ -105,7 +105,10 @@ public class GameManager : MonoBehaviour
                     {
                         int actionIndex = actionturns % player.genes.Length;
                         player.Act(actionIndex);
-                        
+
+                        // 현재 액션에 해당하는 Gense 색상 강조
+                        player.HighlightCurrentAction(actionIndex);
+
                     }
                 }
 
