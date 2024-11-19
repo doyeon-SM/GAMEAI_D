@@ -263,23 +263,15 @@ public class AIPlayer : MonoBehaviour
     //유전자 색 blue 변경(돌연변이 확인)
     public void HighlightNewAction(int actionIndex)
     {
-        // 모든 Gense 색상을 기본값으로 초기화
-        foreach (var spriteRenderer in genseSprites)
-        {
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.color = Color.white; // 기본값
-            }
-        }
-
-        // 현재 인덱스의 Gense 색상을 파란색으로 설정
+        // 특정 Gense의 색상을 파란색으로 설정
         if (actionIndex >= 0 && actionIndex < genseSprites.Count)
         {
             SpriteRenderer currentSprite = genseSprites[actionIndex];
             if (currentSprite != null)
             {
-                currentSprite.color = Color.blue;
+                currentSprite.color = Color.blue; // 파란색으로 설정
             }
         }
     }
+
 }

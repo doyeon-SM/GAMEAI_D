@@ -235,7 +235,7 @@ public class GameManager : MonoBehaviour
             player.VisualizeGenes(spawnPoint);
 
             // 0.1초 대기
-            yield return new WaitForSeconds(0.1f);
+            //yield return new WaitForSeconds(0.1f);
         }
 
         // 3쌍의 AI 플레이어 추출 및 교차 수행
@@ -303,6 +303,12 @@ public class GameManager : MonoBehaviour
         // 각 AI 플레이어의 유전자에 대해 돌연변이 발현 (5% 확률)
         foreach (AIPlayer player in aiPlayers)
         {
+            // 기존 유전자 재생성 및 시각화
+            Transform spawnPoint = spawnPoints[aiPlayers.IndexOf(player)]; // 플레이어 위치 가져오기
+
+            // 돌연변이 발생 추적 리스트
+            List<int> mutatedIndices = new List<int>();
+
             for (int i = 0; i < player.genes.Length; i++)
             {
                 if (Random.value < 0.05f) // 5% 확률로 돌연변이 발생
@@ -316,11 +322,21 @@ public class GameManager : MonoBehaviour
 
                     player.genes[i] = newGene;
                     Debug.Log($"Mutation {player.playerName} index {i}: {oldGene} -> {newGene}");
+
+                    // 돌연변이 인덱스 추가
+                    mutatedIndices.Add(i);
                 }
             }
+            player.VisualizeGenes(spawnPoint);
+            // 모든 돌연변이 시각화 처리
+            foreach (int mutatedIndex in mutatedIndices)
+            {
+                player.HighlightNewAction(mutatedIndex); // 누적된 돌연변이 시각화
+            }
         }
+        
+        yield return new WaitForSeconds(1.0f);
     }
-
 
 
 }
