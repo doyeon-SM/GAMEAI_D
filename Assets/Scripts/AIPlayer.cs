@@ -16,6 +16,11 @@ public class AIPlayer : MonoBehaviour
     public GameObject trenchPrefab; // 참호 프리팹을 참조할 변수
     private GameObject currentPrefab; // 현재 표시되는 프리팹 (AI Player 또는 Trench)
 
+    private GameObject currentGenseInstance; // 현재 GensePrefab의 인스턴스
+    public GameObject GensePrefab; // Gense 프리팹
+    public GameObject Gense_A; // Gense_A 프리팹
+    public GameObject Gense_C; // Gense_C 프리팹
+    public GameObject Gense_G; // Gense_G 프리팹
     // Start is called before the first frame update
     void Start()
     {
@@ -165,5 +170,46 @@ public class AIPlayer : MonoBehaviour
         currentPrefab.SetActive(true); // AI Player 복원
     }
 
-    
+    public void VisualizeGenes(Transform spawnPoint)
+    {
+        // 기존 GensePrefab 삭제
+        if (currentGenseInstance != null)
+        {
+            Destroy(currentGenseInstance);
+        }
+
+        // GensePrefab을 플레이어 위치 아래에 생성
+        Vector3 gensePosition = new Vector3(spawnPoint.position.x, spawnPoint.position.y - 1, spawnPoint.position.z);
+        currentGenseInstance = Instantiate(GensePrefab, gensePosition, Quaternion.identity);
+
+        // GensePrefab의 각 Point에 Gense_A, Gense_C, Gense_G 배치
+        for (int i = 0; i < genes.Length; i++)
+        {
+            string gensePointName = $"gensepoint{i + 1}";
+            Transform gensePoint = currentGenseInstance.transform.Find(gensePointName);
+
+            if (gensePoint != null)
+            {
+                GameObject genseInstance = null;
+                switch (genes[i])
+                {
+                    case ActionType.Attack:
+                        genseInstance = Instantiate(Gense_A, gensePoint.position, Quaternion.identity, gensePoint);
+                        break;
+                    case ActionType.Cover:
+                        genseInstance = Instantiate(Gense_C, gensePoint.position, Quaternion.identity, gensePoint);
+                        break;
+                    case ActionType.Grenade:
+                        genseInstance = Instantiate(Gense_G, gensePoint.position, Quaternion.identity, gensePoint);
+                        break;
+                }
+
+                if (genseInstance != null)
+                {
+                    genseInstance.transform.localPosition = Vector3.zero; // 부모 기준 위치로 초기화
+                }
+            }
+        }
+    }
+
 }

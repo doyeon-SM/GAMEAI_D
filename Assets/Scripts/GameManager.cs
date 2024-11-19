@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour
     private List<string> ranklist = new List<string>(); // 순위와 이름을 저장할 리스트
     private int rank = 1;
 
+    public GameObject GensePrefab; // Gense 프리팹
+    public GameObject Gense_A; // Gense_A 프리팹
+    public GameObject Gense_C; // Gense_C 프리팹
+    public GameObject Gense_G; // Gense_G 프리팹
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,12 +73,19 @@ public class GameManager : MonoBehaviour
             // 지정된 위치에 AI 플레이어 오브젝트 소환
             GameObject aiObject = Instantiate(aiPlayerPrefab, spawnPoints[i].position, Quaternion.identity);
             AIPlayer player = aiObject.GetComponent<AIPlayer>();
-            // 트렌치 프리팹 설정
+            //프리팹 설정
             player.trenchPrefab = TrenchPrefab;
+            player.GensePrefab = GensePrefab;
+            player.Gense_A = Gense_A;
+            player.Gense_C = Gense_C;
+            player.Gense_G = Gense_G;
 
             player.Initialize(aiPlayers);
             player.SetName(playerNames[i].ToString()); // AI 플레이어에 이름 설정
             aiPlayers.Add(player);
+
+            // Gense 시각화
+            player.VisualizeGenes(spawnPoints[i]);
         }
     }
     
@@ -131,8 +143,6 @@ public class GameManager : MonoBehaviour
                     }
                     Debug.Log("Final Rank List: " + string.Join(" ", ranklist));
                     ExtractGenesFromRank(); // 게임 종료 후 유전자 추출 실행
-
-                    
                 }
             }
             // 모든 AI 플레이어 다시 살리기
@@ -148,7 +158,15 @@ public class GameManager : MonoBehaviour
             actionturns = 0;
             rank = 1;
             ranklist.Clear();
-
+            // 업데이트된 유전자로 Gense 시각화 갱신
+            foreach (AIPlayer player in aiPlayers)
+            {
+                if (player.IsAlive)
+                {
+                    Transform spawnPoint = spawnPoints[aiPlayers.IndexOf(player)];
+                    player.VisualizeGenes(spawnPoint);
+                }
+            }
             // 다음 턴 진행
             //Debug.Log($"All AI players revived. Proceeding to next turn {currentTurn + 1}");
 
@@ -259,4 +277,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+
 }
