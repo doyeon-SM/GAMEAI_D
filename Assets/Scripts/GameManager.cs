@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
                         Debug.Log("Game Over. No clear winner.");
                     }
                     Debug.Log("Final Rank List: " + string.Join(" ", ranklist));
-                    ExtractGenesFromRank(); // 게임 종료 후 유전자 추출 실행
+                    yield return StartCoroutine(ExtractGenesFromRank()); // 게임 종료 후 유전자 추출 실행
                 }
             }
             // 모든 AI 플레이어 다시 살리기
@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
         startButton.gameObject.SetActive(true); // 모든 턴 종료 후 Start 버튼 다시 활성화
     }
 
-    void ExtractGenesFromRank()
+    IEnumerator ExtractGenesFromRank()
     {
         List<AIPlayer.ActionType> newGenes = new List<AIPlayer.ActionType>();
 
@@ -223,12 +223,19 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // 새로운 유전자를 AI 플레이어들에게 8개씩 나누어 할당하고 로그 출력
+        // 새로운 유전자를 AI 플레이어들에게 8개씩 나누어 할당하고 시각화
         for (int i = 0; i < aiPlayers.Count; i++)
         {
             AIPlayer player = aiPlayers[i];
             player.genes = newGenes.GetRange(i * 8, 8).ToArray();
             Debug.Log($"{player.playerName}: genes: " + string.Join(", ", player.genes));
+
+            // 유전자 시각화 업데이트
+            Transform spawnPoint = spawnPoints[i]; // 각 플레이어의 소환 위치
+            player.VisualizeGenes(spawnPoint);
+
+            // 0.1초 대기
+            yield return new WaitForSeconds(0.1f);
         }
 
         // 3쌍의 AI 플레이어 추출 및 교차 수행
@@ -246,8 +253,30 @@ public class GameManager : MonoBehaviour
 
         foreach (var (parent1, parent2) in pairs)
         {
-            // 교차: 부모들의 유전자 배열 중 절반을 교환
+            // 유전자 크기와 위치 확장
+            Transform parent1Spawn = spawnPoints[aiPlayers.IndexOf(parent1)];
+            Transform parent2Spawn = spawnPoints[aiPlayers.IndexOf(parent2)];
+
+            // 시각화 준비
+            parent1.VisualizeGenes(parent1Spawn);
+            parent2.VisualizeGenes(parent2Spawn);
+
+            parent1.currentGenseInstance.transform.localScale = new Vector3(8, 8, 1);
+            parent2.currentGenseInstance.transform.localScale = new Vector3(8, 8, 1);
+
+            parent1.currentGenseInstance.transform.position = new Vector3(0, 3, parent1Spawn.position.z);
+            parent2.currentGenseInstance.transform.position = new Vector3(0, -3, parent2Spawn.position.z);
+
+            // 교차점 결정
             int crossoverPoint = Random.Range(1, parent1.genes.Length - 1);
+
+            // 교차 색상 표시
+            parent1.HighlightCrossAction(crossoverPoint); // 해당 유전자 색상을 yellow로
+            parent2.HighlightCrossAction(crossoverPoint); // 해당 유전자 색상을 yellow로
+
+            yield return new WaitForSeconds(1.0f);
+
+            // 교차 수행
             for (int i = crossoverPoint; i < parent1.genes.Length; i++)
             {
                 AIPlayer.ActionType tempGene = parent1.genes[i];
@@ -258,6 +287,17 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Crossover between {parent1.playerName} and {parent2.playerName} at point {crossoverPoint}");
             Debug.Log($"{parent1.playerName} genes after crossover: " + string.Join(", ", parent1.genes));
             Debug.Log($"{parent2.playerName} genes after crossover: " + string.Join(", ", parent2.genes));
+
+            // 유전자 크기 및 위치 복구
+            parent1.currentGenseInstance.transform.localScale = new Vector3(3, 3, 1);
+            parent2.currentGenseInstance.transform.localScale = new Vector3(3, 3, 1);
+
+            parent1.currentGenseInstance.transform.position = parent1Spawn.position;
+            parent2.currentGenseInstance.transform.position = parent2Spawn.position;
+
+            // 유전자 시각화 업데이트
+            parent1.VisualizeGenes(parent1Spawn);
+            parent2.VisualizeGenes(parent2Spawn);
         }
 
         // 각 AI 플레이어의 유전자에 대해 돌연변이 발현 (5% 확률)
@@ -280,6 +320,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
 
 
 }

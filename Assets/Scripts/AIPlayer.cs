@@ -16,7 +16,7 @@ public class AIPlayer : MonoBehaviour
     public GameObject trenchPrefab; // 참호 프리팹을 참조할 변수
     private GameObject currentPrefab; // 현재 표시되는 프리팹 (AI Player 또는 Trench)
 
-    private GameObject currentGenseInstance; // 현재 GensePrefab의 인스턴스
+    public GameObject currentGenseInstance; // 현재 GensePrefab의 인스턴스
     public GameObject GensePrefab; // Gense 프리팹
     public GameObject Gense_A; // Gense_A 프리팹
     public GameObject Gense_C; // Gense_C 프리팹
@@ -244,6 +244,42 @@ public class AIPlayer : MonoBehaviour
             }
         }
     }
+    //유전자 색 yellow 변경(교차 확인)
+    public void HighlightCrossAction(int actionIndex)
+    {
+        for (int i = actionIndex; i < genseSprites.Count; i++)
+        {
+            // 교차한 인덱스의 Gense 색상을 노란색으로 설정
+            if (i >= 0 && i < genseSprites.Count)
+            {
+                SpriteRenderer currentSprite = genseSprites[i];
+                if (currentSprite != null)
+                {
+                    currentSprite.color = Color.yellow;
+                }
+            }
+        }
+    }
+    //유전자 색 blue 변경(돌연변이 확인)
+    public void HighlightNewAction(int actionIndex)
+    {
+        // 모든 Gense 색상을 기본값으로 초기화
+        foreach (var spriteRenderer in genseSprites)
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.white; // 기본값
+            }
+        }
 
-
+        // 현재 인덱스의 Gense 색상을 파란색으로 설정
+        if (actionIndex >= 0 && actionIndex < genseSprites.Count)
+        {
+            SpriteRenderer currentSprite = genseSprites[actionIndex];
+            if (currentSprite != null)
+            {
+                currentSprite.color = Color.blue;
+            }
+        }
+    }
 }
