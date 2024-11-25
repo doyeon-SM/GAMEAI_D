@@ -1,0 +1,61 @@
+[Turn 1]	[Player A]	유전자:Grenade, Grenade, Cover, Cover, Grenade, Grenade, Attack, Cover
+[Turn 1]	[Player B]	유전자:Grenade, Grenade, Grenade, Attack, Grenade, Cover, Grenade, Cover
+[Turn 1]	[Player C]	유전자:Attack, Attack, Grenade, Attack, Grenade, Cover, Grenade, Attack
+[Turn 1]	[Player D]	유전자:Attack, Attack, Grenade, Cover, Cover, Cover, Attack, Attack
+[Turn 1]	[Player E]	유전자:Cover, Cover, Attack, Attack, Cover, Cover, Grenade, Cover
+[Turn 1]	[Player F]	유전자:Cover, Grenade, Grenade, Cover, Grenade, Attack, Grenade, Cover
+[Turn 1]	[Player G]	유전자:Attack, Attack, Attack, Cover, Attack, Attack, Cover, Cover
+[Turn 1]	[Player H]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Cover, Attack
+[Turn 1]	[DRAW]
+[유전자 재배열]
+[New Gene]	[Player A]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Cover, Attack
+[New Gene]	[Player B]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Cover, Attack
+[New Gene]	[Player C]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Cover, Attack
+[New Gene]	[Player D]	유전자:Attack, Attack, Grenade, Cover, Cover, Cover, Attack, Attack
+[New Gene]	[Player E]	유전자:Grenade, Grenade, Grenade, Attack, Grenade, Cover, Grenade, Cover
+[New Gene]	[Player F]	유전자:Cover, Grenade, Grenade, Cover, Grenade, Attack, Grenade, Cover
+[New Gene]	[Player G]	유전자:Attack, Attack, Attack, Cover, Attack, Attack, Cover, Cover
+[New Gene]	[Player H]	유전자:Cover, Grenade, Grenade, Cover, Grenade, Attack, Grenade, Cover
+[유전자 교차]
+[Cross Gene]	[Player A]	[교차지점 3]	유전자:Grenade, Cover, Grenade, Cover, Grenade, Attack, Grenade, Cover
+[Cross Gene]	[Player F]	[교차지점 3]	유전자:Cover, Grenade, Attack, Cover, Attack, Attack, Cover, Attack
+[Cross Gene]	[Player D]	[교차지점 2]	유전자:Attack, Cover, Attack, Cover, Attack, Attack, Cover, Attack
+[Cross Gene]	[Player B]	[교차지점 2]	유전자:Grenade, Attack, Grenade, Cover, Cover, Cover, Attack, Attack
+[Cross Gene]	[Player A]	[교차지점 7]	유전자:Grenade, Cover, Grenade, Cover, Grenade, Attack, Cover, Attack
+[Cross Gene]	[Player C]	[교차지점 7]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Grenade, Cover
+[유전자 돌연변이]
+[Mutation Gene]	[Player A]	[돌연변이지점 5]	Grenade -> Cover
+[Mutation Gene]	[Player B]	[돌연변이지점 2]	Attack -> Grenade
+[Mutation Gene]	[Player D]	[돌연변이지점 6]	Attack -> Cover
+[Mutation Gene]	[Player G]	[돌연변이지점 3]	Attack -> Grenade
+[Turn 2]	[Player A]	유전자:Grenade, Cover, Grenade, Cover, Cover, Attack, Cover, Attack
+[Turn 2]	[Player B]	유전자:Grenade, Grenade, Grenade, Cover, Cover, Cover, Attack, Attack
+[Turn 2]	[Player C]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Grenade, Cover
+[Turn 2]	[Player D]	유전자:Attack, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[Turn 2]	[Player E]	유전자:Grenade, Grenade, Grenade, Attack, Grenade, Cover, Grenade, Cover
+[Turn 2]	[Player F]	유전자:Cover, Grenade, Attack, Cover, Attack, Attack, Cover, Attack
+[Turn 2]	[Player G]	유전자:Attack, Attack, Grenade, Cover, Attack, Attack, Cover, Cover
+[Turn 2]	[Player H]	유전자:Cover, Grenade, Grenade, Cover, Grenade, Attack, Grenade, Cover
+[Turn 2]	[WIN]	[Player D]
+[유전자 재배열]
+[New Gene]	[Player A]	유전자:Attack, Attack, Grenade, Cover, Attack, Attack, Cover, Cover
+[New Gene]	[Player B]	유전자:Attack, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[New Gene]	[Player C]	유전자:Grenade, Grenade, Grenade, Cover, Cover, Cover, Attack, Attack
+[New Gene]	[Player D]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Grenade, Cover
+[New Gene]	[Player E]	유전자:Attack, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[New Gene]	[Player F]	유전자:Grenade, Cover, Attack, Cover, Attack, Attack, Grenade, Cover
+[New Gene]	[Player G]	유전자:Attack, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[New Gene]	[Player H]	유전자:Grenade, Cover, Grenade, Cover, Cover, Attack, Cover, Attack
+[유전자 교차]
+[Cross Gene]	[Player E]	[교차지점 5]	유전자:Attack, Cover, Attack, Cover, Cover, Attack, Cover, Attack
+[Cross Gene]	[Player H]	[교차지점 5]	유전자:Grenade, Cover, Grenade, Cover, Attack, Cover, Cover, Attack
+[Cross Gene]	[Player E]	[교차지점 3]	유전자:Attack, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[Cross Gene]	[Player G]	[교차지점 3]	유전자:Attack, Cover, Attack, Cover, Cover, Attack, Cover, Attack
+[Cross Gene]	[Player B]	[교차지점 4]	유전자:Attack, Cover, Attack, Cover, Attack, Attack, Grenade, Cover
+[Cross Gene]	[Player D]	[교차지점 4]	유전자:Grenade, Cover, Attack, Cover, Attack, Cover, Cover, Attack
+[유전자 돌연변이]
+[Mutation Gene]	[Player C]	[돌연변이지점 8]	Attack -> Cover
+[Mutation Gene]	[Player D]	[돌연변이지점 4]	Cover -> Attack
+[Mutation Gene]	[Player D]	[돌연변이지점 8]	Attack -> Cover
+[Mutation Gene]	[Player F]	[돌연변이지점 3]	Attack -> Grenade
+[Mutation Gene]	[Player G]	[돌연변이지점 8]	Attack -> Cover

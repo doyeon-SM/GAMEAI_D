@@ -95,6 +95,13 @@ public class GameManager : MonoBehaviour
         while ((turns - currentTurn) > 0)
         {
             Debug.Log($"Trun {currentTurn + 1} starts");
+            LogTextManager.Text($"[Turn {currentTurn + 1}]");
+            for(int i = 0; i< aiPlayers.Count; i++)
+            {
+                AIPlayer player = aiPlayers[i];
+                //Debug.Log($"{player.playerName}: genes: " + string.Join(", ", player.genes));
+                LogTextManager.LogText(currentTurn + 1, "Gene", player.playerName, string.Join(", ", player.genes));
+            }
             while (aiPlayers.FindAll(player => player.IsAlive).Count > 1)
             {
                 Debug.Log($"Action {actionturns + 1} starts");
@@ -139,10 +146,12 @@ public class GameManager : MonoBehaviour
                         Debug.Log("Game Over. Winner: " + aiPlayers.Find(player => player.IsAlive)?.playerName);
 
                         ranklist.Add($"{aiPlayers.Find(player => player.IsAlive)?.playerName}: {8}위");
+                        LogTextManager.LogText(currentTurn+1, "Win", aiPlayers.Find(player => player.IsAlive)?.playerName);
                     }
                     else
                     {
                         Debug.Log("Game Over. No clear winner.");
+                        LogTextManager.LogText(currentTurn + 1, "Draw");
                     }
                     Debug.Log("Final Rank List: " + string.Join(" ", ranklist));
                     yield return StartCoroutine(ExtractGenesFromRank()); // 게임 종료 후 유전자 추출 실행
@@ -188,6 +197,7 @@ public class GameManager : MonoBehaviour
     IEnumerator ExtractGenesFromRank()
     {
         List<AIPlayer.ActionType> newGenes = new List<AIPlayer.ActionType>();
+        LogTextManager.Text("[유전자 재배열]");
 
         // 모든 순위의 우선도 합 계산
         int totalPriority = 0;
@@ -228,7 +238,8 @@ public class GameManager : MonoBehaviour
         {
             AIPlayer player = aiPlayers[i];
             player.genes = newGenes.GetRange(i * 8, 8).ToArray();
-            Debug.Log($"{player.playerName}: genes: " + string.Join(", ", player.genes));
+            //Debug.Log($"{player.playerName}: genes: " + string.Join(", ", player.genes));
+            LogTextManager.geneText("Gene", player.playerName, string.Join(", ", player.genes));
 
             // 유전자 시각화 업데이트
             Transform spawnPoint = spawnPoints[i]; // 각 플레이어의 소환 위치
@@ -240,6 +251,7 @@ public class GameManager : MonoBehaviour
 
         // 3쌍의 AI 플레이어 추출 및 교차 수행
         List<(AIPlayer, AIPlayer)> pairs = new List<(AIPlayer, AIPlayer)>();
+        LogTextManager.Text("[유전자 교차]");
         while (pairs.Count < 3)
         {
             AIPlayer parent1 = aiPlayers[Random.Range(0, aiPlayers.Count)];
@@ -284,9 +296,11 @@ public class GameManager : MonoBehaviour
                 parent2.genes[i] = tempGene;
             }
 
-            Debug.Log($"Crossover between {parent1.playerName} and {parent2.playerName} at point {crossoverPoint}");
-            Debug.Log($"{parent1.playerName} genes after crossover: " + string.Join(", ", parent1.genes));
-            Debug.Log($"{parent2.playerName} genes after crossover: " + string.Join(", ", parent2.genes));
+            //Debug.Log($"Crossover between {parent1.playerName} and {parent2.playerName} at point {crossoverPoint}");
+            //Debug.Log($"{parent1.playerName} genes after crossover: " + string.Join(", ", parent1.genes));
+            LogTextManager.geneText("Cross", parent1.playerName, string.Join(", ", parent1.genes), crossoverPoint);
+            //Debug.Log($"{parent2.playerName} genes after crossover: " + string.Join(", ", parent2.genes));
+            LogTextManager.geneText("Cross", parent2.playerName, string.Join(", ", parent2.genes), crossoverPoint);
 
             // 유전자 크기 및 위치 복구
             parent1.currentGenseInstance.transform.localScale = new Vector3(3, 3, 1);
@@ -301,6 +315,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 각 AI 플레이어의 유전자에 대해 돌연변이 발현 (5% 확률)
+        LogTextManager.Text("[유전자 돌연변이]");
         foreach (AIPlayer player in aiPlayers)
         {
             // 기존 유전자 재생성 및 시각화
@@ -321,7 +336,8 @@ public class GameManager : MonoBehaviour
                     } while (newGene == oldGene);
 
                     player.genes[i] = newGene;
-                    Debug.Log($"Mutation {player.playerName} index {i}: {oldGene} -> {newGene}");
+                    //Debug.Log($"Mutation {player.playerName} index {i}: {oldGene} -> {newGene}");
+                    LogTextManager.geneText("Mutation", player.playerName, $"{oldGene} -> {newGene}", i);
 
                     // 돌연변이 인덱스 추가
                     mutatedIndices.Add(i);
