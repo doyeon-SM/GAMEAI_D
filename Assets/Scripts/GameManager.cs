@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour
     public GameObject Gense_C; // Gense_C 프리팹
     public GameObject Gense_G; // Gense_G 프리팹
 
+    public GameObject rateTextPrefab; // 2D UI Text 프리팹
+    public RectTransform canvas;     // UI Canvas
+
+    private GeneWinRateManager geneManager;
+    private GameObject[] rateTexts;  // 생성된 텍스트 객체 배열
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +45,21 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Spawn Points are not assigned or empty in the inspector.");
             return;
         }
-        
+        if (canvas == null)
+        {
+            canvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
+            if (canvas == null)
+            {
+                Debug.LogError("Canvas를 찾을 수 없습니다. 씬에 Canvas를 추가하세요.");
+                return;
+            }
+        }
+        if (rateTextPrefab == null)
+        {
+            Debug.LogError("Rate Text Prefab이 할당되지 않았습니다. Inspector에서 연결하세요.");
+            return;
+        }
+
         InitializePlayers();
         startButton.onClick.AddListener(OnStartButtonClicked); // Start 버튼 클릭 리스너
     }
@@ -68,6 +88,8 @@ public class GameManager : MonoBehaviour
 
     void InitializePlayers()
     {
+        rateTexts = new GameObject[spawnPoints.Length]; // 배열 크기 초기화
+
         for (int i = 0; i < 8; i++)
         {
             // 지정된 위치에 AI 플레이어 오브젝트 소환
@@ -86,12 +108,22 @@ public class GameManager : MonoBehaviour
 
             // Gense 시각화
             player.VisualizeGenes(spawnPoints[i]);
+
+            // 텍스트 객체 생성
+            rateTexts[i] = Instantiate(rateTextPrefab, canvas);
+            rateTexts[i].name = $"RateText_{i}";
+
+            // 텍스트 위치 설정
+            Vector3 spawnPosition = spawnPoints[i].position;
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(new Vector3(spawnPosition.x - 2, spawnPosition.y - 1, spawnPosition.z));
+            rateTexts[i].GetComponent<RectTransform>().position = screenPosition;
         }
     }
     
 
     IEnumerator GameLoop()
     {
+        geneManager = new GeneWinRateManager();
         while ((turns - currentTurn) > 0)
         {
             Debug.Log($"Trun {currentTurn + 1} starts");
@@ -100,7 +132,11 @@ public class GameManager : MonoBehaviour
             {
                 AIPlayer player = aiPlayers[i];
                 //Debug.Log($"{player.playerName}: genes: " + string.Join(", ", player.genes));
-                LogTextManager.LogText(currentTurn + 1, "Gene", player.playerName, string.Join(", ", player.genes));
+                float rate = geneManager.PredictWinRate(string.Join(" ", player.genes));
+
+                // 텍스트 갱신
+                UpdateRateText(i, rate);
+                LogTextManager.LogText(currentTurn + 1, "Gene", player.playerName, string.Join(", ", player.genes), rate);
             }
             while (aiPlayers.FindAll(player => player.IsAlive).Count > 1)
             {
@@ -141,11 +177,15 @@ public class GameManager : MonoBehaviour
 
                 if (aiPlayers.FindAll(player => player.IsAlive).Count <= 1)
                 {
+                    
                     if (aiPlayers.FindAll(player => player.IsAlive).Count == 1)
                     {
-                        Debug.Log("Game Over. Winner: " + aiPlayers.Find(player => player.IsAlive)?.playerName);
+                        Debug.Log("Game Over. Winner: " + aiPlayers.Find(player => player.IsAlive)?.playerName + "/" + string.Join("", aiPlayers.Find(player => player.IsAlive)?.genes));
+                        
+                        geneManager.AddWinningGene(string.Join(" ", aiPlayers.Find(player => player.IsAlive)?.genes));
 
                         ranklist.Add($"{aiPlayers.Find(player => player.IsAlive)?.playerName}: {8}위");
+                        
                         LogTextManager.LogText(currentTurn+1, "Win", aiPlayers.Find(player => player.IsAlive)?.playerName);
                     }
                     else
@@ -354,5 +394,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
     }
 
-
+    private void UpdateRateText(int index, float rate)
+    {
+        if (rateTexts[index] != null)
+        {
+            Text textComponent = rateTexts[index].GetComponent<Text>();
+            textComponent.text = $"{rate:F2}%"; // 소수점 2자리까지 출력
+        }
+    }
 }

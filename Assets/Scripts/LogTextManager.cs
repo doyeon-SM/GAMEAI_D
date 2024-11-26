@@ -29,14 +29,14 @@ public class LogTextManager : MonoBehaviour
             Debug.Log($"로그 파일 경로: {logFilePath}");
         }
     }
-    public static void LogText(int turn, string messageType, string player = null, string geneData = null)
+    public static void LogText(int turn, string messageType, string player = null, string geneData = null, float rate = 0f)
     {
         string logMessage = "";
 
         if (messageType == "Gene")
         {
             // 유전자 로그 형식
-            logMessage = $"[Turn {turn}]\t[Player {player}]\t유전자:{geneData}";
+            logMessage = $"[Turn {turn}]\t[Player {player}]\t유전자:{geneData}\t예측승률:{rate:F2}%";
         }
         else if (messageType == "Win")
         {
